@@ -10,3 +10,9 @@ This README is subject to change multiple times during early development.
 # About
 **Bount** is an open source software suite for MOBA game development.
 This project is currently in development. Our early goals include softwares with the ability to design and maintain MOBA games, from simple to complex mechanics. If you're interested in what we're planning to do, please join our community discord: https://discord.gg/muzSUegbJb.
+
+# How to Build
+```
+cmake -S. -Bbuild
+cmake --build ./build
+```

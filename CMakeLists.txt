@@ -33,6 +33,10 @@ target_link_directories(wxWidgets-window-ci PRIVATE ${wxWidgets_SOURCE_DIR}/lib/
 target_link_libraries(wxWidgets-window-ci wx::base wx::core wx::html wx::richtext wx::xrc)
 add_dependencies(wxWidgets-window-ci wx::base wx::core wx::html wx::richtext wx::xrc)
 
+foreach(app IN ITEMS game-studio item-database map-editor mechanic-scripter skill-crafter ui-designer unit-modeller)
+  include(apps/${app}/build.cmake)
+endforeach()
+
 include(CTest)
 enable_testing()
 add_test(NAME wxWidgets-Window COMMAND wxWidgets-window-ci)

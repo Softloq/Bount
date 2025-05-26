@@ -5,25 +5,16 @@ jobs:
     name: Windows Build
     runs-on: windows-latest
     steps:
-      # Nektos/Act is used locally for setting the env.workspace variable while github actions will autoset it to their predefined workspace value.
-      # Throughout the steps, this variable is primarily used for the repository root directory.
-      # This is done to support both local job runners and the github actions job runners, preventing irrelevant and redundant branch commits.
-      - name: Set Workspace Variable
-        if: env.workspace == ''
-        shell: powershell
-        run: |
-          Write-Host "::set-env name=workspace::${{github.workspace}}"
-      
       - name: CMake Build
         shell: powershell
         run: |
-          cmake -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE -DBUILD_BOUNT_CORE_TESTS=ON --no-warn-unused-cli -S"${{env.workspace}}" -B"${{env.workspace}}/build" -G "Visual Studio 17 2022" -T host=x64 -A x64
-          cmake --build "${{env.workspace}}/build" --config Release --target ALL_BUILD -j ([int]$env:NUMBER_OF_PROCESSORS+2) --
-        working-directory: "${{env.workspace}}"
+          cmake -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE -DBUILD_BOUNT_CORE_TESTS=ON --no-warn-unused-cli -S"${{github.workspace}}" -B"${{github.workspace}}/build" -G "Visual Studio 17 2022" -T host=x64 -A x64
+          cmake --build "${{github.workspace}}/build" --config Release --target ALL_BUILD -j ([int]$env:NUMBER_OF_PROCESSORS+2) --
+        working-directory: "${{github.workspace}}"
       
       - name: Run Tests
         id: ctest
         continue-on-error: true
         shell: powershell
         run: ctest -C Release
-        working-directory: "${{env.workspace}}/build"
+        working-directory: "${{github.workspace}}/build"

@@ -2,6 +2,7 @@
 ![Static Badge](https://img.shields.io/badge/CMake->=4.0-yellow)
 ![Static Badge](https://img.shields.io/badge/Docs-PDF-red)
 ![Static Badge](https://img.shields.io/badge/Docs-HTML-orange)
+[![CI/CD](https://github.com/Softloq/Bount/actions/workflows/ci.yml/badge.svg)](https://github.com/Softloq/Bount/actions/workflows/ci.yml)
 
 [![Static Badge](https://img.shields.io/badge/Community%20Discord-000000?logo=discord)](https://discord.gg/muzSUegbJb)
 

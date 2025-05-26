@@ -1,3 +1,7 @@
 /.build
 /.cache
 /build
+
+/.actrc
+/act.exe
+/act

@@ -26,12 +26,16 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(wxWidgets)
 
+function(add_wxWidgets tgt)
+  target_compile_definitions(${tgt} PRIVATE _UNICODE=1)
+  target_include_directories(${tgt} PRIVATE ${wxWidgets_SOURCE_DIR}/include/msvc ${wxWidgets_SOURCE_DIR}/include)
+  target_link_directories(${tgt} PRIVATE ${wxWidgets_SOURCE_DIR}/lib/vc_x64_lib)
+  target_link_libraries(${tgt} wx::base wx::core wx::html wx::richtext wx::xrc)
+  add_dependencies(${tgt} wx::base wx::core wx::html wx::richtext wx::xrc)
+endfunction()
+
 add_executable(wxWidgets-window-ci tests/wxWidgets/window/main.cpp)
-target_compile_definitions(wxWidgets-window-ci PRIVATE _UNICODE=1)
-target_include_directories(wxWidgets-window-ci PRIVATE ${wxWidgets_SOURCE_DIR}/include/msvc ${wxWidgets_SOURCE_DIR}/include)
-target_link_directories(wxWidgets-window-ci PRIVATE ${wxWidgets_SOURCE_DIR}/lib/vc_x64_lib)
-target_link_libraries(wxWidgets-window-ci wx::base wx::core wx::html wx::richtext wx::xrc)
-add_dependencies(wxWidgets-window-ci wx::base wx::core wx::html wx::richtext wx::xrc)
+add_wxWidgets(wxWidgets-window-ci)
 
 foreach(app IN ITEMS game-studio item-database map-editor mechanic-scripter skill-crafter ui-designer unit-modeller)
   include(apps/${app}/build.cmake)

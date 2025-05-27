@@ -12,13 +12,23 @@
 
 namespace bount::filesystem
 {
-    path::path(const string &p_path_str) noexcept
-        : m_path_str(p_path_str)
+    path::path(const string &path_str) noexcept
+        : m_path_str(path_str)
     {
     }
-    path::path(string &&p_path_str) noexcept
-        : m_path_str(std::move(p_path_str))
+    path &path::operator=(const string &path_str) noexcept
     {
+        m_path_str = path_str;
+        return *this;
+    }
+    path::path(string &&path_str) noexcept
+        : m_path_str(std::move(path_str))
+    {
+    }
+    path &path::operator=(string &&path_str) noexcept
+    {
+        m_path_str = std::move(path_str);
+        return *this;
     }
 
     void path::append(const path &p_path) noexcept
@@ -136,11 +146,11 @@ namespace bount::filesystem
         std::call_once(once, []()
         {
         #if defined(BOUNT_WINDOWS_OS)
-            char buffer[MAX_PATH];
-            GetModuleFileNameA(NULL, buffer, MAX_PATH);
+            char buffer[MAX_PATH + 1];
+            GetModuleFileNameA(NULL, buffer, MAX_PATH + 1);
         #elif defined(BOUNT_LINUX_OS)
-            char buffer[PATH_MAX];
-            ssize_t count = readlink("/proc/self/exe", buffer, PATH_MAX);
+            char buffer[PATH_MAX + 1];
+            ssize_t count = readlink("/proc/self/exe", buffer, PATH_MAX + 1);
         #else
             #error "Not implemented for the current os"
         #endif
@@ -155,9 +165,24 @@ namespace bount::filesystem
         std::call_once(once, []() { program_dir_path = program_file().parent(); });
         return program_dir_path;
     }
-    const path &path::program_tmp_dir() noexcept
+    const path &path::temp_dir() noexcept
     {
-        static path p("");
-        return p;
+        static path temp_dir_path;
+        static std::once_flag once;
+        std::call_once(once, []()
+        {
+        #if defined(BOUNT_WINDOWS_OS)
+            char buffer[MAX_PATH + 1];
+            DWORD result = GetTempPathA(MAX_PATH + 1, buffer);
+            if (result > MAX_PATH || result == 0)
+            {
+                temp_dir_path = "";
+            }
+        #else
+            #error "Not implemented for the current os"
+        #endif
+            temp_dir_path.m_path_str = buffer;
+        });
+        return temp_dir_path;
     }
 }

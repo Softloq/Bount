@@ -1,4 +1,4 @@
 #include "app.hpp"
 
 #define WinMain main
-wxIMPLEMENT_APP(App);
+wxIMPLEMENT_APP(app);

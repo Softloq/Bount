@@ -23,8 +23,11 @@ namespace bount::filesystem
 
         BOUNT_CORE_API path() noexcept = default;
 
-        BOUNT_CORE_API path(const string &p_path) noexcept;
-        BOUNT_CORE_API path(string &&p_path) noexcept;
+        BOUNT_CORE_API path(const string &path_str) noexcept;
+        BOUNT_CORE_API path &operator=(const string &path_str) noexcept;
+
+        BOUNT_CORE_API path(string &&path_str) noexcept;
+        BOUNT_CORE_API path &operator=(string &&path_str) noexcept;
 
         // Member functions
 
@@ -68,8 +71,8 @@ namespace bount::filesystem
         /** @return Path to the program's directory. */
         BOUNT_CORE_API [[nodiscard]] static const path &program_dir() noexcept;
 
-        /** @return Path to the program's tmp directory. */
-        BOUNT_CORE_API [[nodiscard]] static const path &program_tmp_dir() noexcept;
+        /** @return Path to the system's temp directory. */
+        BOUNT_CORE_API [[nodiscard]] static const path &temp_dir() noexcept;
 
     private:
         string m_path_str;

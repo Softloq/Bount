@@ -5,7 +5,7 @@
 
 using namespace bount;
 
-AppFrame::AppFrame(const wxString &title)
+app_frame::app_frame(const wxString &title)
     : wxFrame(nullptr, wxID_ANY, title, wxDefaultPosition, wxSize(600, 480))
 {
     // Create a menu bar
@@ -21,16 +21,16 @@ AppFrame::AppFrame(const wxString &title)
     CreateStatusBar();
     SetStatusText("Welcome to Bount Game Studio!");
 
-    Bind(wxEVT_MENU, &AppFrame::OnCompileMenuClicked, this, ID_COMPILE_MENUITEM);
-    Bind(wxEVT_MENU, &AppFrame::OnExit, this, wxID_EXIT);
+    Bind(wxEVT_MENU, &app_frame::on_compile_menu_clicked, this, ID_COMPILE_MENUITEM);
+    Bind(wxEVT_MENU, &app_frame::on_exit, this, wxID_EXIT);
 }
 
-void AppFrame::OnExit(wxCommandEvent &event)
+void app_frame::on_exit(wxCommandEvent &event)
 {
     Close(true);
 }
 
-void AppFrame::OnCompileMenuClicked(wxCommandEvent &event)
+void app_frame::on_compile_menu_clicked(wxCommandEvent &event)
 {
     wxDirDialog dialog(this, "Choose a directory",
                        wxEmptyString, // Default path (can be set)
@@ -45,9 +45,10 @@ void AppFrame::OnCompileMenuClicked(wxCommandEvent &event)
     int result = std::system(cmake_build_cmd.c_str());
 }
 
-bool App::OnInit()
+bool app::OnInit()
 {
-    AppFrame *frame = new AppFrame("Bount Game Studio");
+    app_frame *frame = new app_frame("Bount Game Studio");
+    canvas = new gl_canvas(frame);
     frame->Show(true);
     return true;
 }

@@ -2,6 +2,11 @@
 
 #include <wx/wx.h>
 
+enum
+{
+    ID_COMPILE_MENUITEM = wxID_HIGHEST + 1
+};
+
 class AppFrame final : public wxFrame
 {
 public:
@@ -9,6 +14,7 @@ public:
 
 private:
     void OnExit(wxCommandEvent &event);
+    void OnCompileMenuClicked(wxCommandEvent &event);
 };
 
 class App final : public wxApp

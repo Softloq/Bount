@@ -1,8 +1,13 @@
 cmake_minimum_required(VERSION 4.0)
+include(FetchContent)
 
 project(bount-software-suite VERSION 0.0.0)
 
-include(FetchContent)
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+# Third-parties
 
 set(FETCHCONTENT_BASE_DIR "${CMAKE_CURRENT_BINARY_DIR}/thirdparty")
 
@@ -28,11 +33,11 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(wxWidgets)
 
+list(APPEND wxWidgets_CORE_LIBS wx::base wx::core wx::html wx::richtext wx::xrc)
 function(add_wxWidgets tgt)
   target_compile_definitions(${tgt} PRIVATE _UNICODE=1)
   target_include_directories(${tgt} PRIVATE "${wxWidgets_SOURCE_DIR}/include/msvc" "${wxWidgets_SOURCE_DIR}/include")
   target_link_directories(${tgt} PRIVATE "${wxWidgets_SOURCE_DIR}/lib/vc_x64_lib")
-  target_link_libraries(${tgt} wx::base wx::core wx::html wx::richtext wx::xrc)
   add_dependencies(${tgt} wx::base wx::core wx::html wx::richtext wx::xrc)
 endfunction()
 
@@ -62,6 +67,28 @@ if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/Debug/cmake")
 else()
   add_custom_target(cmake-portable)
 endif()
+
+file(GLOB_RECURSE BOUNT_CORE_SRC
+     "dev/src/bount-filesystem/**.c++"
+     "dev/src/bount-filesystem/**.cpp"
+     "dev/src/bount-filesystem/**.cxx"
+     "dev/src/bount-filesystem/**.cc")
+
+add_library(bount-core SHARED ${BOUNT_CORE_SRC})
+target_include_directories(bount-core PRIVATE "dev/include")
+target_compile_definitions(
+  bount-core
+  PRIVATE BOUNT_CORE_BUILD_API
+  PUBLIC  BOUNT_CORE_USE_API
+)
+set_target_properties(
+  bount-core PROPERTIES
+  ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/lib"
+  ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_CURRENT_BINARY_DIR}/lib/Debug"
+  ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${CMAKE_CURRENT_BINARY_DIR}/lib/Release"
+)
+target_precompile_headers(bount-core PRIVATE "dev/include/bount-lib/core/precompiled.hpp")
+add_library(bount::core ALIAS bount-core)
 
 add_executable(wxWidgets-window-ci tests/wxWidgets/window/main.cpp)
 add_wxWidgets(wxWidgets-window-ci)

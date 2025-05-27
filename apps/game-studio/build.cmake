@@ -1,4 +1,5 @@
 add_executable(game-studio apps/game-studio/src/main.cpp apps/game-studio/src/app.cpp)
-target_include_directories(game-studio PRIVATE apps/game-studio/include)
+target_include_directories(game-studio PRIVATE apps/game-studio/include dev/include)
+target_link_libraries(game-studio PRIVATE bount::core ${wxWidgets_CORE_LIBS})
 add_wxWidgets(game-studio)
 add_dependencies(game-studio cmake-portable)

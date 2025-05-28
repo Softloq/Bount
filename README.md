@@ -17,3 +17,9 @@ This project is currently in development. Our early goals include softwares with
 cmake -S. -Bbuild
 cmake --build ./build
 ```
+
+## Changelog
+### May 28th, 2025
+Progress so far. Small steps first. Created an opengl window within wxWidgets for the Game Studio application.
+
+![My Image](misc/screenshot.png)

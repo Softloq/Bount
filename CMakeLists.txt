@@ -77,21 +77,14 @@ if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/thirdparty/cmake-v${CMAKE_PORTABLE_VE
     )
 endif()
 
-if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/Debug/cmake")
-    add_custom_target(
-        cmake-portable
-        COMMAND ${CMAKE_COMMAND} -E tar xzf
-                "${CMAKE_CURRENT_BINARY_DIR}/thirdparty/cmake-v${CMAKE_PORTABLE_VERSION}.zip"
-        COMMAND ${CMAKE_COMMAND} -E remove_directory
-                "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/cmake"
-        COMMAND ${CMAKE_COMMAND} -E rename
-                "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/cmake-${CMAKE_PORTABLE_VERSION}-windows-x86_64"
-                "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/cmake"
-        WORKING_DIRECTORY "$<CONFIG>"
-    )
-else()
-    add_custom_target(cmake-portable)
-endif()
+add_custom_target(
+    cmake-portable
+    COMMAND ${CMAKE_COMMAND}
+        -DCONFIG="$<CONFIG>"
+        -DCOMPILER="${CMAKE_CXX_COMPILER_ID}"
+        -DCMAKE_PORTABLE_VERSION="4.0.2"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/cmake-scripts/cmake-portable.cmake"
+)
 
 # --------- bount-core ----------
 file(

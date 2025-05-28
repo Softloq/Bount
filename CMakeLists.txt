@@ -11,7 +11,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(FETCHCONTENT_BASE_DIR "${CMAKE_CURRENT_BINARY_DIR}/thirdparty")
 
-# Download and Compile googletest
+# --------- googletest ----------
 FetchContent_Declare(
     googletest
     GIT_REPOSITORY https://github.com/google/googletest.git
@@ -21,7 +21,7 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE INTERNAL "")
 FetchContent_MakeAvailable(googletest)
 
-# Download and Compile wxWidgets
+# --------- wxWidgets ----------
 set(wxWidgets_USE_STATIC 1)
 set(wxBUILD_SHARED OFF)
 FetchContent_Declare(
@@ -41,7 +41,32 @@ function(add_wxWidgets tgt)
     add_dependencies(${tgt} wx::base wx::core wx::html wx::richtext wx::xrc)
 endfunction()
 
-# Download and Extract CMake for portable use
+# --------- glew ----------
+if(MSVC)
+    if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/thirdparty/glew.zip")
+        file(
+            DOWNLOAD
+            "https://github.com/nigels-com/glew/releases/download/glew-2.2.0/glew-2.2.0-win32.zip"
+            "${CMAKE_CURRENT_BINARY_DIR}/thirdparty/glew.zip"
+            SHOW_PROGRESS
+        )
+    endif()
+endif()
+
+add_custom_target(
+    glew-lib
+    COMMAND ${CMAKE_COMMAND}
+        -DCONFIG="$<CONFIG>"
+        -DCOMPILER="${CMAKE_CXX_COMPILER_ID}"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/cmake-scripts/glew.cmake"
+)
+
+add_library(glew INTERFACE)
+add_dependencies(glew glew-lib)
+target_include_directories(glew INTERFACE "${CMAKE_CURRENT_BINARY_DIR}/thirdparty/glew/glew-2.2.0/include")
+target_link_libraries(glew INTERFACE glew32)
+
+# --------- cmake portable ----------
 set(CMAKE_PORTABLE_VERSION 4.0.2)
 if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/thirdparty/cmake-v${CMAKE_PORTABLE_VERSION}.zip")
     file(
@@ -68,6 +93,7 @@ else()
     add_custom_target(cmake-portable)
 endif()
 
+# --------- bount-core ----------
 file(
     GLOB_RECURSE BOUNT_CORE_SRC
     "dev/src/bount-filesystem/**.c++"
@@ -78,6 +104,7 @@ file(
 
 add_library(bount-core SHARED ${BOUNT_CORE_SRC})
 target_include_directories(bount-core PRIVATE "dev/include")
+target_link_directories(bount-core PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/lib/$<CONFIG>")
 target_compile_definitions(
     bount-core
     PRIVATE BOUNT_CORE_BUILD_API
@@ -92,6 +119,34 @@ set_target_properties(
 target_precompile_headers(bount-core PRIVATE "dev/include/bount-lib/core/precompiled.hpp")
 add_library(bount::core ALIAS bount-core)
 
+# --------- bount-gl ----------
+file(
+    GLOB_RECURSE BOUNT_GL_SRC
+    "dev/src/bount-gl/**.c++"
+    "dev/src/bount-gl/**.cpp"
+    "dev/src/bount-gl/**.cxx"
+    "dev/src/bount-gl/**.cc"
+)
+
+add_library(bount-gl SHARED ${BOUNT_GL_SRC})
+add_dependencies(bount-gl bount-core glew)
+target_include_directories(bount-gl PRIVATE "dev/include")
+target_compile_definitions(
+    bount-gl
+    PRIVATE BOUNT_GL_BUILD_API
+    PUBLIC  BOUNT_GL_USE_API
+)
+target_link_libraries(bount-gl PUBLIC bount-core glew)
+set_target_properties(
+    bount-gl PROPERTIES
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/lib"
+    ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_CURRENT_BINARY_DIR}/lib/Debug"
+    ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${CMAKE_CURRENT_BINARY_DIR}/lib/Release"
+)
+target_precompile_headers(bount-gl PRIVATE "dev/include/bount-lib/gl/precompiled.hpp")
+add_library(bount::gl ALIAS bount-gl)
+
+# --------- unit tests ----------
 add_executable(wxWidgets-window-ci tests/wxWidgets/window/main.cpp)
 add_wxWidgets(wxWidgets-window-ci)
 

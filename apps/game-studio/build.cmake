@@ -8,6 +8,6 @@ file(
 
 add_executable(game-studio ${BOUNT_GAME_STUDIO_SRC})
 target_include_directories(game-studio PRIVATE apps/game-studio/include dev/include)
-target_link_libraries(game-studio PRIVATE bount::core ${wxWidgets_CORE_LIBS})
+target_link_libraries(game-studio PRIVATE bount::core bount::gl ${wxWidgets_CORE_LIBS})
 add_wxWidgets(game-studio)
 add_dependencies(game-studio cmake-portable)

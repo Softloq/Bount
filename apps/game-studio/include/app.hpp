@@ -23,5 +23,5 @@ public:
     virtual bool OnInit() override;
     
 private:
-    gl_canvas* canvas;
+    std::unique_ptr<gl_canvas> m_canvas;
 };

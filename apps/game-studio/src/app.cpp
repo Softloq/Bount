@@ -48,7 +48,9 @@ void app_frame::on_compile_menu_clicked(wxCommandEvent &event)
 bool app::OnInit()
 {
     app_frame *frame = new app_frame("Bount Game Studio");
-    canvas = new gl_canvas(frame);
+    wxGLAttributes attribs;
+    attribs.PlatformDefaults().RGBA().MinRGBA(8, 8, 8, 8).DoubleBuffer().Stencil(8).Depth(24).EndList();
+    m_canvas = std::make_unique<gl_canvas>(frame, attribs);
     frame->Show(true);
     return true;
 }

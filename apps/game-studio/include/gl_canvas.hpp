@@ -10,7 +10,7 @@
 class gl_canvas: public wxGLCanvas
 {
 public:
-    gl_canvas(wxFrame* parent, const wxGLAttributes& attribs);
+    gl_canvas(wxWindow* parent, const wxGLAttributes& attribs);
 
 private:
     std::unique_ptr<wxGLContext> m_context;

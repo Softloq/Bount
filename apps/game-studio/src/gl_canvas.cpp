@@ -3,7 +3,7 @@
 
 using namespace bount;
 
-gl_canvas::gl_canvas(wxFrame *parent, const wxGLAttributes& attribs)
+gl_canvas::gl_canvas(wxWindow *parent, const wxGLAttributes& attribs)
     : wxGLCanvas(parent, attribs, wxID_ANY)
     , m_initialized(false)
 {

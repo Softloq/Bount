@@ -3,12 +3,11 @@
 
 using namespace bount;
 
-gl_canvas::gl_canvas(wxWindow *parent, const wxGLAttributes& attribs)
+gl_canvas::gl_canvas(wxWindow* parent, const wxGLAttributes& attribs)
     : wxGLCanvas(parent, attribs, wxID_ANY)
+    , m_context(new wxGLContext(this))
     , m_initialized(false)
-{
-    m_context = std::make_unique<wxGLContext>(this);
-    
+{    
     Bind(wxEVT_PAINT, &gl_canvas::on_paint, this, wxID_ANY);
     Bind(wxEVT_SIZE, &gl_canvas::on_size, this, wxID_ANY);
 }

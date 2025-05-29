@@ -13,7 +13,7 @@ public:
     gl_canvas(wxWindow* parent, const wxGLAttributes& attribs);
 
 private:
-    std::unique_ptr<wxGLContext> m_context;
+    wxGLContext* m_context;
     bount::bool8 m_initialized;
 
     void on_paint(wxPaintEvent& event);

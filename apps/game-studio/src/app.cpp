@@ -6,25 +6,26 @@
 
 using namespace bount;
 
-app_frame::app_frame(const wxString &title)
+app_frame::app_frame(const wxString& title)
     : wxFrame(nullptr, wxID_ANY, title, wxDefaultPosition, wxSize(1024, 800))
 {
     // Create a menu bar
-    wxMenuBar *menuBar = new wxMenuBar;
+    wxMenuBar* menuBar = new wxMenuBar;
 
-    wxMenu *fileMenu = new wxMenu;
+    wxMenu* fileMenu = new wxMenu;
+    fileMenu->Append(ID_OPEN_3D_MODEL, "Open 3D Model", "Open a 3D Model file");
     fileMenu->Append(ID_COMPILE_MENUITEM, "Compile", "Compile your project");
     fileMenu->Append(wxID_SEPARATOR);
     fileMenu->Append(wxID_EXIT, "&Exit\tCtrl+Q", "Quit the application");
     menuBar->Append(fileMenu, "&File");
 
-    wxMenu *editMenu = new wxMenu;
+    wxMenu* editMenu = new wxMenu;
     menuBar->Append(editMenu, "&Edit");
 
-    wxMenu *windowMenu = new wxMenu;
+    wxMenu* windowMenu = new wxMenu;
     menuBar->Append(windowMenu, "&Window");
 
-    wxMenu *helpMenu = new wxMenu;
+    wxMenu* helpMenu = new wxMenu;
     menuBar->Append(helpMenu, "&Help");
 
     SetMenuBar(menuBar);
@@ -68,6 +69,11 @@ void app_frame::on_exit(wxCommandEvent &event)
     Close(true);
 }
 
+void app_frame::on_open_3d_model_clicked(wxCommandEvent& event)
+{
+
+}
+
 void app_frame::on_compile_menu_clicked(wxCommandEvent &event)
 {
     wxDirDialog dialog(this, "Choose a directory",
@@ -85,7 +91,7 @@ void app_frame::on_compile_menu_clicked(wxCommandEvent &event)
 
 bool app::OnInit()
 {
-    app_frame *frame = new app_frame("Bount Game Studio");
+    app_frame* frame = new app_frame("Bount Game Studio");
     frame->Show(true);
     return true;
 }

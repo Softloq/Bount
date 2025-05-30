@@ -5,7 +5,7 @@
 
 enum
 {
-    ID_OPEN_3D_MODEL = wxID_HIGHEST + 1,
+    ID_OPEN_3D_MODEL_MENUITEM = wxID_HIGHEST + 1,
     ID_COMPILE_MENUITEM = wxID_HIGHEST + 2
 };
 

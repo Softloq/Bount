@@ -1,6 +1,7 @@
 #include "app.hpp"
 #include <bount-filesystem/path.hpp>
 #include <wx/dirctrl.h>
+#include <wx/filedlg.h>
 #include <wx/splitter.h>
 #include <cstdlib>
 
@@ -13,7 +14,7 @@ app_frame::app_frame(const wxString& title)
     wxMenuBar* menuBar = new wxMenuBar;
 
     wxMenu* fileMenu = new wxMenu;
-    fileMenu->Append(ID_OPEN_3D_MODEL, "Open 3D Model", "Open a 3D Model file");
+    fileMenu->Append(ID_OPEN_3D_MODEL_MENUITEM, "Open 3D Model", "Open a 3D Model file");
     fileMenu->Append(ID_COMPILE_MENUITEM, "Compile", "Compile your project");
     fileMenu->Append(wxID_SEPARATOR);
     fileMenu->Append(wxID_EXIT, "&Exit\tCtrl+Q", "Quit the application");
@@ -29,7 +30,6 @@ app_frame::app_frame(const wxString& title)
     menuBar->Append(helpMenu, "&Help");
 
     SetMenuBar(menuBar);
-    
     
     wxColor bg_color(25, 25, 25);
     wxPanel* properties = new wxPanel(this);
@@ -60,6 +60,7 @@ app_frame::app_frame(const wxString& title)
     CreateStatusBar();
     SetStatusText("Welcome to Bount Game Studio!");
 
+    Bind(wxEVT_MENU, &app_frame::on_open_3d_model_clicked, this, ID_OPEN_3D_MODEL_MENUITEM);
     Bind(wxEVT_MENU, &app_frame::on_compile_menu_clicked, this, ID_COMPILE_MENUITEM);
     Bind(wxEVT_MENU, &app_frame::on_exit, this, wxID_EXIT);
 }
@@ -71,7 +72,12 @@ void app_frame::on_exit(wxCommandEvent &event)
 
 void app_frame::on_open_3d_model_clicked(wxCommandEvent& event)
 {
+    wxFileDialog openFileDialog(this, "Open file", "", "",
+                                "Wavefront 3D file (*.obj)|*.obj",
+                                wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+    if (openFileDialog.ShowModal() == wxID_CANCEL) return;
 
+    SetStatusText(wxString::Format("Loaded '%s'", openFileDialog.GetFilename()));
 }
 
 void app_frame::on_compile_menu_clicked(wxCommandEvent &event)

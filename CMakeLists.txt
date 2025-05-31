@@ -87,13 +87,7 @@ add_custom_target(
 )
 
 # --------- bount-core ----------
-file(
-    GLOB_RECURSE BOUNT_CORE_SRC
-    "dev/src/bount-filesystem/**.c++"
-    "dev/src/bount-filesystem/**.cpp"
-    "dev/src/bount-filesystem/**.cxx"
-    "dev/src/bount-filesystem/**.cc"
-)
+file(GLOB_RECURSE BOUNT_CORE_SRC "dev/src/bount-filesystem/**.cpp")
 
 add_library(bount-core SHARED ${BOUNT_CORE_SRC})
 target_include_directories(bount-core PRIVATE "dev/include")
@@ -112,14 +106,29 @@ set_target_properties(
 target_precompile_headers(bount-core PRIVATE "dev/include/bount-lib/core/precompiled.hpp")
 add_library(bount::core ALIAS bount-core)
 
-# --------- bount-gl ----------
-file(
-    GLOB_RECURSE BOUNT_GL_SRC
-    "dev/src/bount-gl/**.c++"
-    "dev/src/bount-gl/**.cpp"
-    "dev/src/bount-gl/**.cxx"
-    "dev/src/bount-gl/**.cc"
+# --------- bount-gpu ----------
+file(GLOB_RECURSE BOUNT_GPU_SRC "dev/src/bount-gpu/**.cpp")
+
+add_library(bount-gpu SHARED ${BOUNT_GPU_SRC})
+add_dependencies(bount-gpu bount-core glew)
+target_include_directories(bount-gpu PRIVATE "dev/include")
+target_compile_definitions(
+    bount-gpu
+    PRIVATE BOUNT_GPU_BUILD_API
+    PUBLIC  BOUNT_GPU_USE_API
 )
+target_link_libraries(bount-gpu PUBLIC bount-core glew)
+set_target_properties(
+    bount-gpu PROPERTIES
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/lib"
+    ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_CURRENT_BINARY_DIR}/lib/Debug"
+    ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${CMAKE_CURRENT_BINARY_DIR}/lib/Release"
+)
+target_precompile_headers(bount-gpu PRIVATE "dev/include/bount-lib/gpu/precompiled.hpp")
+add_library(bount::gpu ALIAS bount-gpu)
+
+# --------- bount-gl ----------
+file(GLOB_RECURSE BOUNT_GL_SRC "dev/src/bount-gl/**.cpp")
 
 add_library(bount-gl SHARED ${BOUNT_GL_SRC})
 add_dependencies(bount-gl bount-core glew)

@@ -1,5 +1,7 @@
 #include "app.hpp"
 #include <bount-filesystem/path.hpp>
+#include <bount-gl/model/object.hpp>
+#include <bount-gl/model/formats/obj.hpp>
 #include <wx/dirctrl.h>
 #include <wx/filedlg.h>
 #include <wx/splitter.h>
@@ -72,12 +74,16 @@ void app_frame::on_exit(wxCommandEvent &event)
 
 void app_frame::on_open_3d_model_clicked(wxCommandEvent& event)
 {
+    using namespace bount::gl;
+
     wxFileDialog openFileDialog(this, "Open file", "", "",
                                 "Wavefront 3D file (*.obj)|*.obj",
                                 wxFD_OPEN | wxFD_FILE_MUST_EXIST);
     if (openFileDialog.ShowModal() == wxID_CANCEL) return;
 
     SetStatusText(wxString::Format("Loaded '%s'", openFileDialog.GetFilename()));
+    model::format::obj cube_obj(model::format::obj_file_res(openFileDialog.GetPath().ToStdString()));
+    model::object cube_model;
 }
 
 void app_frame::on_compile_menu_clicked(wxCommandEvent &event)
